@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stock Market
+Bundle-SymbolicName: com.cc.stock.market.sim
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Unknown
+Automatic-Module-Name: com.cc.stock.market.sim
+Bundle-RequiredExecutionEnvironment: JavaSE-15
