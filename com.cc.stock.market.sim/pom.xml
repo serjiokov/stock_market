@@ -4,17 +4,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.cc.stock.market.sim</groupId>
 	<artifactId>com.cc.stock.market.sim</artifactId>
-	<version>0.0.1</version>
+	
 
 	<parent>
 		<groupId>com.cc.stock.market.sim.root</groupId>
 		<artifactId>com.cc.stock.market.sim.root</artifactId>
 		<version>0.0.1</version>
 	</parent>
-
-
+        
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+        	<sourceDirectory>src</sourceDirectory>
+	        <testSourceDirectory>test</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
