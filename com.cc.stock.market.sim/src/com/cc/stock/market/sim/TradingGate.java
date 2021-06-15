@@ -10,5 +10,5 @@ public interface TradingGate {
 
 	boolean registerBuyOrder(long timestamp, String name, int counts, int price);
 
-	void connectToMarket(MarketEngine m);
+	boolean connectToMarket(MarketEngine m);
 }

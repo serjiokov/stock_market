@@ -29,7 +29,7 @@ public class MarketEngineImpl implements MarketEngine {
 	}
 
 	public void registerTrades(List<Trade> trades) {
-		Trades.setTrades(trades);
+		Trades.getInstance().setTrades(trades);
 	}
 
 	/**
@@ -77,6 +77,7 @@ public class MarketEngineImpl implements MarketEngine {
 			}
 		});
 
+		registerTrades(trades);
 		return trades;
 	}
 
@@ -101,7 +102,18 @@ public class MarketEngineImpl implements MarketEngine {
 
 	@Override
 	public void showMarketStatus() {
+		System.out.println("Status orders on market:");
 		saleOffers.values().forEach(System.out::println);
 		buyOffers.values().forEach(System.out::println);
+	}
+
+	@Override
+	public TreeMap<String, Order> getBuyOffers() {
+		return buyOffers;
+	}
+
+	@Override
+	public TreeMap<String, Order> getSellOffers() {
+		return saleOffers;
 	}
 }

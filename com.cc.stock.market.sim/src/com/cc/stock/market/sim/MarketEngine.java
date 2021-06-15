@@ -4,6 +4,7 @@
 package com.cc.stock.market.sim;
 
 import java.util.List;
+import java.util.TreeMap;
 
 public interface MarketEngine {
 
@@ -33,5 +34,9 @@ public interface MarketEngine {
 	void addBuyOrder(Order offer);
 
 	void showMarketStatus();
+
+	TreeMap<String, Order> getBuyOffers();
+
+	TreeMap<String, Order> getSellOffers();
 
 }

@@ -10,18 +10,30 @@ import com.cc.stock.market.sim.Trade;
 
 public class Trades {
 
-	private static List<Trade> trades = new ArrayList<>();
+	private List<Trade> trades = new ArrayList<>();
 
-	public static List<Trade> getTrades() {
+	public static Trades INSTANCE = new Trades();
+
+	private Trades() {
+		//
+	}
+
+	public static Trades getInstance() {
+		return INSTANCE;
+	}
+
+	public List<Trade> getTrades() {
 		return trades;
 	}
 
-	public static void setTrade(Trade trade) {
+	public void setTrade(Trade trade) {
 		trades.add(trade);
 	}
 
-	public static void setTrades(List<Trade> trades) {
-		trades.addAll(trades);
+	public void setTrades(List<Trade> trades) {
+		synchronized (this.trades) {
+			this.trades.addAll(trades);
+		}
 	}
 
 }

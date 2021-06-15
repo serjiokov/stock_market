@@ -12,8 +12,9 @@ public class TradingGateImpl implements TradingGate {
 	private MarketEngine market = null;
 
 	@Override
-	public void connectToMarket(MarketEngine m) {
-		this.market = m;
+	public boolean connectToMarket(MarketEngine market) {
+		this.market = market;
+		return this.market != null;
 	}
 
 	@Override

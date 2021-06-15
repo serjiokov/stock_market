@@ -19,19 +19,22 @@ public class MarketStockSim {
 	private static final String version = "1.0.0"; //$NON-NLS-1$
 	private static final String name = "Market Stock One"; //$NON-NLS-1$
 
-	private static final int TRADE_DURATION = 2000;
-	private static SimpleDateFormat dtFormat = new SimpleDateFormat("hh:mm:ss"); //$NON-NLS-1$
-	private static MarketEngine mrktEngine;
-	private static TradingGate trdGate;
+	private final int TRADE_DURATION = 2000;
+	private SimpleDateFormat dtFormat = new SimpleDateFormat("hh:mm:ss"); //$NON-NLS-1$
+	private MarketEngine mrktEngine;
+	private Thread mrktEngineThread;
 
-	private static Logger logger;
+	private TradingGate trdGate;
+
+	private Logger logger = System.getLogger(MarketStockSim.class.getName());
+	private static boolean isSimRunning = true;
 
 	private static final String CMD_EXIT = "E"; //$NON-NLS-1$
 	private static final String CMD_BUY_FORMAT = "B"; //$NON-NLS-1$
 	private static final String CMD_SELL_FORMAT = "S"; //$NON-NLS-1$
 
-	public static void main(String[] args) {
-		logger = System.getLogger(MarketStockSim.class.getName());
+	public void main(String[] args) {
+
 		// introduction
 		startPromt();
 
@@ -46,7 +49,7 @@ public class MarketStockSim {
 
 	}
 
-	private static void startInteraction() {
+	public void startInteraction() {
 		Scanner scanner = new Scanner(System.in);
 		String line = "";
 		long timestamp = -1L;
@@ -60,17 +63,14 @@ public class MarketStockSim {
 			if (line == null || line.isEmpty()) {
 				continue;
 			}
-			String[] inputs = line.split(":");
+			// split
+			String[] inputs = splitInput(line);
 
 			// check on exit
-			if (checkExit(inputs)) {
-				System.out.printf("Simulator closed by user ...");
+			if (checkInputOnExit(inputs)) {
+				System.out.printf("Simulator closed by the user request...");
 				scanner.close();
 				System.exit(0);
-			}
-			// no exit matched
-			if (!isValid(inputs)) {
-				continue;
 			}
 
 			registerOrder(timestamp, inputs);
@@ -78,17 +78,21 @@ public class MarketStockSim {
 		}
 	}
 
-	private static void register() {
-		mrktEngine = getRegiseredMarketEngine();
-		trdGate = getTradingGate();
-		trdGate.connectToMarket(mrktEngine);
+	private String[] splitInput(String line) {
+		return line.split(":");
 	}
 
-	private static void startPromt() {
+	public boolean register() {
+		mrktEngine = getRegiseredMarketEngine();
+		trdGate = getTradingGate();
+		return trdGate.connectToMarket(mrktEngine);
+	}
+
+	public static void startPromt() {
 		System.out.println("<<< " + name + "[version: " + version + "] started >>>");
 	}
 
-	private static boolean isValid(String[] inputs) {
+	public boolean isValidInputFormat(String[] inputs) {
 		if (inputs.length != 4) {
 			logger.log(Level.ERROR, "Input format not valid [count of items]\n ");
 			return false;
@@ -101,52 +105,71 @@ public class MarketStockSim {
 			logger.log(Level.ERROR, "Input format for [name] is empty or null\n");
 			return false;
 		}
-		if (Integer.valueOf(inputs[2].trim()) == null) {
+		try {
+			Integer.valueOf(inputs[2].trim());
+		} catch (Exception e) {
 			logger.log(Level.ERROR, "Input format for [count] is not valid\n");
+			logger.log(Level.ERROR, e.getMessage());
 			return false;
 		}
-		if (Integer.valueOf(inputs[3].trim()) == null) {
+		try {
+			Integer.valueOf(inputs[3].trim());
+		} catch (Exception e) {
 			logger.log(Level.ERROR, "Input format for [price] is not valid\n");
+			logger.log(Level.ERROR, e.getMessage());
 			return false;
 		}
 		return true;
 	}
 
-	private static void registerOrder(long timestamp, String[] inputs) {
+	public boolean registerOrder(long timestamp, String[] inputs) {
+		boolean result = false;
+		// if no exit matched before
+		if (!isValidInputFormat(inputs)) {
+			return result;
+		}
 		if (CMD_BUY_FORMAT.equals(inputs[0])) {
-			trdGate.registerBuyOrder(timestamp, inputs[1], Integer.valueOf(inputs[2].trim()),
+			result = trdGate.registerBuyOrder(timestamp, inputs[1], Integer.valueOf(inputs[2].trim()),
 					Integer.valueOf(inputs[3].trim()));
 		}
 		if (CMD_SELL_FORMAT.equals(inputs[0])) {
-			trdGate.registerSellOrder(timestamp, inputs[1], Integer.valueOf(inputs[2].trim()),
+			result = trdGate.registerSellOrder(timestamp, inputs[1], Integer.valueOf(inputs[2].trim()),
 					Integer.valueOf(inputs[3].trim()));
 		}
+		return result;
+
 	}
 
-	private static void startMarketEngine() {
-		(new Thread() {
+	public Thread startMarketEngine() {
+		isSimRunning = true;
+		mrktEngineThread = new Thread() {
 			@Override
 			public void run() {
-				while (true) {
-					List<Trade> trades = mrktEngine.trade();
-					if (trades == null || trades.isEmpty()) {
+				while (isSimRunning) {
+					if (mrktEngine == null) {
+						// not yet connected waiting (...)
 						continue;
 					}
-					System.out.println("Trade(s) created:");
-					trades.forEach(System.out::println);
+					List<Trade> trades = mrktEngine.trade();
+					if (!trades.isEmpty()) {
+						System.out.println("Trade(s) created for:");
+						trades.forEach(System.out::println);
+					}
 					try {
 						Thread.sleep(TRADE_DURATION);
 					} catch (InterruptedException e) {
 						logger.log(Level.ERROR, e.getMessage());
 					}
-
 					mrktEngine.showMarketStatus();
 				}
+
 			}
-		}).start();
+		};
+		mrktEngineThread.start();
+		return mrktEngineThread;
 	}
 
-	private static boolean checkExit(String[] inputs) {
+	private static boolean checkInputOnExit(String[] inputs) {
 		if (inputs != null && inputs.length > 0 && inputs[0].equals(CMD_EXIT)) {
 			return true;
 		}
@@ -169,6 +192,16 @@ public class MarketStockSim {
 	 */
 	private static TradingGate getTradingGate() {
 		return new TradingGateImpl();
+	}
+
+	public boolean stopMarketEngine() {
+		isSimRunning = false;
+		mrktEngineThread.interrupt();
+		return mrktEngineThread.isInterrupted();
+	}
+
+	public MarketEngine getMarket() {
+		return mrktEngine;
 	}
 
 }

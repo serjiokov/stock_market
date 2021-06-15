@@ -6,3 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Unknown
 Automatic-Module-Name: com.cc.stock.market.sim
 Bundle-RequiredExecutionEnvironment: JavaSE-15
+Export-Package: com.cc.stock.market.launcher,
+ com.cc.stock.market.sim,
+ com.cc.stock.market.sim.impl
