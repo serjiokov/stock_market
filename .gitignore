@@ -1,19 +1,13 @@
-#Maven
-target/
-
-# Compiled class file
-*.class
-
-# JDT output
-/*/*/bin/
-
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-#m2e
-/.settings/
-releng/**/.settings/
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
