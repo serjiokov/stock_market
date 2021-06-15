@@ -21,11 +21,20 @@ public class MarketEngineImpl implements MarketEngine {
 	@Override
 	public Trade setDeal(Order buy, Order sell) {
 
-		// should do latest check
-		buyOffers.remove(buy.getName());
-		saleOffers.remove(sell.getName());
-		return new TradeImpl(System.currentTimeMillis(), buy, sell);
-
+		// should reduce counts of sell/buy items
+		int leftOrder = sell.getQuantity() - buy.getQuantity();
+		if (leftOrder > 0) {
+			Order sellPart = sell.splitOnCount(buy.getQuantity());
+			if (sellPart != null) {
+				buyOffers.remove(buy.getName());
+				return new TradeImpl(System.currentTimeMillis(), buy, sellPart);
+			}
+		}
+		if (leftOrder == 0) {
+			saleOffers.remove(sell.getName());
+			return new TradeImpl(System.currentTimeMillis(), buy, sell);
+		}
+		return null;
 	}
 
 	public void registerTrades(List<Trade> trades) {
@@ -43,9 +52,15 @@ public class MarketEngineImpl implements MarketEngine {
 		buyOffers.entrySet().stream() //
 				.forEach(b -> {
 					Order saler = saleOffers.get(b.getKey());
-					if (saler != null) {
-						sallers.add(saler);
-						bayers.add(b.getValue());
+
+					// condition 1 : the price btw sellers and buyers should match
+					if (saler.getPrice() == b.getValue().getPrice() &&
+					// condition 2: the count of buy can not be more than sell
+					(b.getValue().getQuantity() <= saler.getQuantity())) {
+						if (saler != null) {
+							sallers.add(saler);
+							bayers.add(b.getValue());
+						}
 					}
 				});
 
@@ -102,9 +117,11 @@ public class MarketEngineImpl implements MarketEngine {
 
 	@Override
 	public void showMarketStatus() {
-		System.out.println("Status orders on market:");
-		saleOffers.values().forEach(System.out::println);
-		buyOffers.values().forEach(System.out::println);
+		if (!saleOffers.values().isEmpty() || !buyOffers.values().isEmpty()) {
+			System.out.println("Status orders on market:");
+			saleOffers.values().forEach(System.out::println);
+			buyOffers.values().forEach(System.out::println);
+		}
 	}
 
 	@Override

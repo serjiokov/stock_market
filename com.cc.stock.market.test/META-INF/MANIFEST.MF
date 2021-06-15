@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: stock.market.test
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: stock.market.test
+Bundle-RequiredExecutionEnvironment: JavaSE-15
+Require-Bundle: org.junit,
+ com.cc.stock.market.sim;visibility:=reexport

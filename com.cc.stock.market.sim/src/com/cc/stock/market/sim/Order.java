@@ -16,4 +16,6 @@ public interface Order {
 	OrderType getType();
 
 	int getStatus();
+
+	Order splitOnCount(int leftOrder);
 }

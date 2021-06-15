@@ -78,7 +78,7 @@ public class MarketStockSim {
 		}
 	}
 
-	private String[] splitInput(String line) {
+	public String[] splitInput(String line) {
 		return line.split(":");
 	}
 

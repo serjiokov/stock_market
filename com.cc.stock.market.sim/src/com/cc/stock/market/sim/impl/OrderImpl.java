@@ -52,14 +52,20 @@ public class OrderImpl implements Order {
 		// for further implementation
 		return 0;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "uid: " +getTimeStamp() + //
-				"\ttype:" +getType()+//
-				"\tname: " + getName()+//
-				"\tcount: " +getQuantity()+//
-				"\tprice: " +getPrice();
+		return "uid: " + getTimeStamp() + //
+				"\ttype:" + getType() + //
+				"\tname: " + getName() + //
+				"\tcount: " + getQuantity() + //
+				"\tprice: " + getPrice();
+	}
+
+	@Override
+	public Order splitOnCount(int part) {
+		this.quantity = this.quantity - part;
+		return new OrderImpl(this.type, this.name, this.timestamp, part, this.price);
 	}
 
 }
