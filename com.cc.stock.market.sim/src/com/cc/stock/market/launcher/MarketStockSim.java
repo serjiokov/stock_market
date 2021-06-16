@@ -217,8 +217,7 @@ public class MarketStockSim {
 
 	public boolean stopMarketEngine() {
 		isSimRunning = false;
-		mrktEngineThread.interrupt();
-		return mrktEngineThread.isInterrupted();
+		return true;
 	}
 
 	public MarketEngine getMarket() {

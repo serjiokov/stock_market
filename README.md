@@ -2,7 +2,7 @@
   Market Stock Simulator implementation
 </h1>
 
-<h10>
+<h9>
 <p>  How to build:  
 
 *   mvn clean verify
@@ -24,6 +24,9 @@ The next format supported:
 limitations:
  - offers with same name will be replaced to support modification schema;
 </p>
-</h10>  
+</h9>  
 
+<p>
 
+Tests code coverage:
+   com.stock.market.sim - 75.2%
