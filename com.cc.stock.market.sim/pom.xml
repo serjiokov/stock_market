@@ -12,10 +12,9 @@
 		<artifactId>com.cc.stock.market.sim.root</artifactId>
 		<version>0.0.1</version>
 	</parent>
-        
 	<build>
-        	<sourceDirectory>src</sourceDirectory>
-	        <testSourceDirectory>test</testSourceDirectory>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -38,7 +37,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.cc.stock.market.launcher.MarketStockSim</mainClass>
+							<mainClass>com.cc.stock.market.launcher.Launcher</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

@@ -32,6 +32,7 @@ public class MarketEngineImpl implements MarketEngine {
 		}
 		if (leftOrder == 0) {
 			saleOffers.remove(sell.getName());
+			buyOffers.remove(buy.getName());
 			return new TradeImpl(System.currentTimeMillis(), buy, sell);
 		}
 		return null;
@@ -52,14 +53,15 @@ public class MarketEngineImpl implements MarketEngine {
 		buyOffers.entrySet().stream() //
 				.forEach(b -> {
 					Order saler = saleOffers.get(b.getKey());
-
-					// condition 1 : the price btw sellers and buyers should match
-					if (saler.getPrice() == b.getValue().getPrice() &&
-					// condition 2: the count of buy can not be more than sell
-					(b.getValue().getQuantity() <= saler.getQuantity())) {
-						if (saler != null) {
-							sallers.add(saler);
-							bayers.add(b.getValue());
+					if (saler != null) {
+						// condition 1 : the price btw sellers and buyers should match
+						if (saler.getPrice() == b.getValue().getPrice() &&
+						// condition 2: the count of buy can not be more than sell
+						(b.getValue().getQuantity() <= saler.getQuantity())) {
+							if (saler != null) {
+								sallers.add(saler);
+								bayers.add(b.getValue());
+							}
 						}
 					}
 				});

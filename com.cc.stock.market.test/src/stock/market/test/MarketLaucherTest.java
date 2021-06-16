@@ -96,7 +96,7 @@ public class MarketLaucherTest {
 		assumeTrue(simulator.getMarket().getBuyOffers().size() == 4);
 		assumeTrue(simulator.getMarket().getSellOffers().size() == 4);
 		try {
-			TimeUnit.SECONDS.sleep(3);
+			TimeUnit.SECONDS.sleep(2);
 		} catch (InterruptedException e) {
 			assumeNoException(e);
 		}

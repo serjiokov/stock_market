@@ -13,6 +13,7 @@ import com.cc.stock.market.sim.MarketEngine;
 import com.cc.stock.market.sim.Trade;
 import com.cc.stock.market.sim.TradingGate;
 import com.cc.stock.market.sim.impl.MarketEngineImpl;
+import com.cc.stock.market.sim.impl.Trades;
 import com.cc.stock.market.sim.impl.TradingGateImpl;
 
 public class MarketStockSim {
@@ -33,12 +34,14 @@ public class MarketStockSim {
 	private static final String CMD_EXIT = "E"; //$NON-NLS-1$
 	private static final String CMD_BUY_FORMAT = "B"; //$NON-NLS-1$
 	private static final String CMD_SELL_FORMAT = "S"; //$NON-NLS-1$
+	private static final String CMD_TRADES_FORMAT = "T"; //$NON-NLS-1$
+	private static final String CMD_MARKET_STATUS_FORMAT = "A"; //$NON-NLS-1$
 
 	public void startInteraction() {
 		Scanner scanner = new Scanner(System.in);
 		String line = "";
 		long timestamp = -1L;
-		System.out.println("The next format supproted: [B,S:name:count:price], [E - for exit]\n");
+		System.out.println("The next format supported: [B,S:name:count:price], [E - for exit], [T - show list trades],[A - show market status] \n");
 		while (true) {
 			inputInvitation();
 			line = scanner.next();
@@ -55,6 +58,16 @@ public class MarketStockSim {
 				System.out.printf("Simulator closed by the user request...");
 				scanner.close();
 				System.exit(0);
+			}
+			// check to show list trades
+			if (chekInputToShowListTardes(inputs)) {
+				showTradesStatus(Trades.getInstance().getTrades());
+				continue;
+			}
+			// check to show market status
+			if (chekInputToShowStatistic(inputs)) {
+				mrktEngine.showMarketStatus();
+				continue;
 			}
 
 			if (registerOrder(timestamp, inputs)) {
@@ -160,6 +173,20 @@ public class MarketStockSim {
 
 	private static boolean checkInputOnExit(String[] inputs) {
 		if (inputs != null && inputs.length > 0 && inputs[0].equals(CMD_EXIT)) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean chekInputToShowListTardes(String[] inputs) {
+		if (inputs != null && inputs.length > 0 && inputs[0].equals(CMD_TRADES_FORMAT)) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean chekInputToShowStatistic(String[] inputs) {
+		if (inputs != null && inputs.length > 0 && inputs[0].equals(CMD_MARKET_STATUS_FORMAT)) {
 			return true;
 		}
 		return false;
