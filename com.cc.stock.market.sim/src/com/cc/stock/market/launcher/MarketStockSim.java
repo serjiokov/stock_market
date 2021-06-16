@@ -16,6 +16,7 @@ import com.cc.stock.market.sim.impl.MarketEngineImpl;
 import com.cc.stock.market.sim.impl.TradingGateImpl;
 
 public class MarketStockSim {
+	private static final String SPLITTER = ":"; //$NON-NLS-1$
 	private static final String version = "1.0.0"; //$NON-NLS-1$
 	private static final String name = "Market Stock One"; //$NON-NLS-1$
 
@@ -33,30 +34,13 @@ public class MarketStockSim {
 	private static final String CMD_BUY_FORMAT = "B"; //$NON-NLS-1$
 	private static final String CMD_SELL_FORMAT = "S"; //$NON-NLS-1$
 
-	public void main(String[] args) {
-
-		// introduction
-		startPromt();
-
-		// register engine and gates
-		register();
-
-		// start simulator
-		startMarketEngine();
-
-		// start reading
-		startInteraction();
-
-	}
-
 	public void startInteraction() {
 		Scanner scanner = new Scanner(System.in);
 		String line = "";
 		long timestamp = -1L;
 		System.out.println("The next format supproted: [B,S:name:count:price], [E - for exit]\n");
 		while (true) {
-			String dateTime = dtFormat.format(System.currentTimeMillis());
-			System.out.printf(String.format("[%s]: ", dateTime));
+			inputInvitation();
 			line = scanner.next();
 
 			timestamp = System.currentTimeMillis();
@@ -73,13 +57,19 @@ public class MarketStockSim {
 				System.exit(0);
 			}
 
-			registerOrder(timestamp, inputs);
-			mrktEngine.showMarketStatus();
+			if (registerOrder(timestamp, inputs)) {
+				mrktEngine.showMarketStatus();
+			}
 		}
 	}
 
+	private void inputInvitation() {
+		String dateTime = dtFormat.format(System.currentTimeMillis());
+		System.out.printf(String.format("[%s]: ", dateTime)); //$NON-NLS-1$
+	}
+
 	public String[] splitInput(String line) {
-		return line.split(":");
+		return line.split(SPLITTER); // $NON-NLS-1$
 	}
 
 	public boolean register() {
@@ -88,8 +78,8 @@ public class MarketStockSim {
 		return trdGate.connectToMarket(mrktEngine);
 	}
 
-	public static void startPromt() {
-		System.out.println("<<< " + name + "[version: " + version + "] started >>>");
+	public void startPromt() {
+		System.out.println(name + "[version: " + version + "] started ...");
 	}
 
 	public boolean isValidInputFormat(String[] inputs) {
@@ -152,15 +142,14 @@ public class MarketStockSim {
 					}
 					List<Trade> trades = mrktEngine.trade();
 					if (!trades.isEmpty()) {
-						System.out.println("Trade(s) created for:");
-						trades.forEach(System.out::println);
+						showTradesStatus(trades);
+						mrktEngine.showMarketStatus();
 					}
 					try {
 						Thread.sleep(TRADE_DURATION);
 					} catch (InterruptedException e) {
 						logger.log(Level.ERROR, e.getMessage());
 					}
-					mrktEngine.showMarketStatus();
 				}
 
 			}
@@ -174,6 +163,11 @@ public class MarketStockSim {
 			return true;
 		}
 		return false;
+	}
+
+	private void showTradesStatus(List<Trade> trades) {
+		System.out.println("Trade(s) created for:");
+		trades.forEach(System.out::println);
 	}
 
 	/**
